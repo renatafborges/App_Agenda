@@ -8,18 +8,19 @@ import android.widget.*
 class MainActivity : AppCompatActivity() {
 
     private lateinit var edtNomeContatoCadastro : EditText
-    private lateinit var edtCelularContatoCadastro : EditText
+    private lateinit var edtTelefoneContatoCadastro : EditText
     private lateinit var rdgTipoContato : RadioGroup
-    private lateinit var edtReferenciaContato : EditText
-//    private lateinit var edtEmailContato : EditText
+    private lateinit var edtinfoAdicional : EditText
     private lateinit var btnSalvar : Button
-    private lateinit var edtPesquise : EditText
+    private lateinit var edtCampoPesquisa : EditText
     private lateinit var btnPesquisar : Button
-    private lateinit var btnExibir : Button
+    private lateinit var txtContatos: TextView
+    private lateinit var btnExibirLista : Button
 
-    private var tipo: Int = -1
+//    private var tipo: Int = -1
 
     private var contatos : MutableList<Contato> = mutableListOf()
+    private var infoAdiconal: AdicionarTipo? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,75 +30,171 @@ class MainActivity : AppCompatActivity() {
 
     fun bindViews() {
         edtNomeContatoCadastro = findViewById(R.id.edtNome)
-        edtCelularContatoCadastro = findViewById(R.id.edtTelefone)
-        edtReferenciaContato = findViewById(R.id.edtReferenciaContato)
-//        edtEmailContato = findViewById(R.id.edtEmailContato)
-        btnSalvar = findViewById(R.id.btnSalvar)
-
-        edtPesquise = findViewById(R.id.edtPesquise)
+        edtTelefoneContatoCadastro = findViewById(R.id.edtTelefone)
         rdgTipoContato = findViewById(R.id.rdgTipo)
+        edtinfoAdicional = findViewById(R.id.edtReferencia)
+        btnSalvar = findViewById(R.id.btnSalvar)
+        edtCampoPesquisa = findViewById(R.id.edtCampoPesquisa)
         btnPesquisar = findViewById(R.id.btnPesquisar)
+        txtContatos = findViewById(R.id.txtContatos)
+        btnExibirLista = findViewById(R.id.btnExibirLista)
 
+////BOTÃO SALVAR
         btnSalvar.setOnClickListener {
-            val nomeDigitado = edtNomeContatoCadastro.text.toString()
-            val celularDigitado = edtCelularContatoCadastro.text.toString()
-        //    val tipoSelecionado = rdgTipoContato.checkedRadioButtonId
-            val referenciaDigitada = edtReferenciaContato.text.toString()
-//            val emailDigitado = edtEmailContato.text.toString()
+            val nome = edtNomeContatoCadastro.text.toString()
+            val telefone = edtTelefoneContatoCadastro.text.toString()
+            val info = edtinfoAdicional.text.toString()
 
-            tipo?.let{
-            registrarContato(nomeDigitado, celularDigitado, tipo, referenciaDigitada)
+            if(nome.isEmpty()){
+                Toast.makeText(this, "O nome do usuário não foi informado", Toast.LENGTH_SHORT)
+                    .show()
+//                Toast.makeText(this, getString(R.string.error_name), Toast.LENGTH_SHORT)
+//                    .show()
+            }
+            else if(telefone.isEmpty()){
+                Toast.makeText(this, "O telefone do usuário não foi informado", Toast.LENGTH_SHORT)
+                    .show()
+//                Toast.makeText(this, getString(R.string.error_number), Toast.LENGTH_SHORT)
+//                    .show()
+            }else{
+                infoAdiconal?.let {
+                    if(info.isEmpty()){
+                        Toast.makeText(this, "Uma informação adicional precisa ser inserida", Toast.LENGTH_SHORT)
+                            .show()
+//                        Toast.makeText(this, getString(R.string.error_reference), Toast.LENGTH_SHORT)
+//                            .show()
+                    }else{
+                        criarNovoContato(nome, telefone, it, info)
+                    }
+                }
+                exibirListaContatos(txtContatos)
+            }
+            edtNomeContatoCadastro.text.clear()
+            edtTelefoneContatoCadastro.text.clear()
+            edtinfoAdicional.text.clear()
         }
-    }
+
+    ///////BOTÃO PESQUISAR
 
         btnPesquisar.setOnClickListener {
-            val pesquisa = edtPesquise.text.toString()
-            val resultado = contatos.find { contato -> contato.nome == pesquisa }
-            if (resultado != null){
-                Toast.makeText(this,
-                    resultado.exibirRegistro(),
-                    Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this,
-                    "Não foi possível encontrar um contato",
-                    Toast.LENGTH_SHORT).show()
+            val nomePesquisa = edtCampoPesquisa.text.toString()
+            if(nomePesquisa.isEmpty()){
+                Toast.makeText(this, "Insira o nome para pesquisa", Toast.LENGTH_SHORT)
+                    .show()
+            }else{
+                buscarContato(nomePesquisa, txtContatos)
+                btnExibirLista.visibility = View.VISIBLE
 
+                btnExibirLista.setOnClickListener{
+                    it.visibility = View.INVISIBLE
+                    exibirListaContatos(txtContatos)
+                }
             }
+            edtCampoPesquisa.text.clear()
         }
     }
 
-    fun registrarContato(nome: String, telefone: String, tipo: Int, referencia: String){
-        contatos.add(
-            Contato(nome = nome, telefone = telefone, tipo = tipo, referencia = referencia) //named parameters
+    /////FUNÇÃO RADIO BUTTON TIPOS CONTATO
 
-        )
-        //val contato = Contato(nome = nome, telefone = telefone, tipo = tipo, referencia = referencia, email = email)
-        Toast.makeText(this,
-            contatos.last().exibirRegistro(),
-            Toast.LENGTH_SHORT).show()
-    }
-
-    fun onRadioButtonClicked(view: View) {
-        if (view is RadioButton) {
-
+    fun onRadioButtonClicked(view: View){
+        if(view is RadioButton){
+            edtinfoAdicional = findViewById(R.id.edtReferencia)
             val foiChecado = view.isChecked
 
-            when (view.id) {
-                R.id.rdPessoal -> {
-                    edtReferenciaContato.visibility = View.VISIBLE
-                    edtReferenciaContato.hint = "Referência"
-                    if (foiChecado) {
-                        tipo = Tipo.PESSOAL.id
+            when(view.id){
+                R.id.rdTrabalho -> {
+                    edtinfoAdicional.visibility = View.VISIBLE
+                    if(foiChecado){
+                        infoAdiconal = AdicionarTipo.TRABALHO
+                       edtinfoAdicional.setHint("Email")
                     }
                 }
-                R.id.rdTrabalho -> {
-                    edtReferenciaContato.visibility = View.VISIBLE
-                    edtReferenciaContato.hint = "E-mail"
-                    if (foiChecado) {
-                        tipo = Tipo.TRABALHO.id
+                R.id.rdPessoal -> {
+                    edtinfoAdicional.visibility = View.VISIBLE
+                    if(foiChecado){
+                        infoAdiconal = AdicionarTipo.PESSOAL
+                        edtinfoAdicional.setHint("Referência")
                     }
                 }
             }
         }
     }
+
+//    fun onRadioButtonClicked(view: View) {
+//        if (view is RadioButton){
+//            val foiChecado = view.isChecked
+//
+//            when (view.id) {
+//                R.id.rdPessoal -> {
+//                    edtinfoAdicional.visibility = View.VISIBLE
+//                    edtinfoAdicional.hint = "Referência"
+//                    if (foiChecado) {
+//                        tipo = Tipo.PESSOAL.id
+//                    }
+//                }
+//                R.id.rdTrabalho -> {
+//                    edtinfoAdicional.visibility = View.VISIBLE
+//                    edtinfoAdicional.hint = "E-mail"
+//                    if (foiChecado) {
+//                        tipo = Tipo.TRABALHO.id
+//                    }
+//                }
+//            }
+//        }
+//    }
+
+    /// FUNCAO CRIAR NOVO CONTATO
+
+    private fun criarNovoContato(nome: String, telefone: String, infoAdicional: AdicionarTipo, info: String){
+        if(infoAdicional == AdicionarTipo.TRABALHO){
+            contatos.add(
+                Trabalho(nome,telefone,info)
+            )
+        }
+        else if(infoAdicional == AdicionarTipo.PESSOAL){
+            contatos.add(
+                Pessoal(nome,telefone,info)
+            )
+        }
+        /*contacts.add(
+            Person(name,number,info)
+        )*/
+    }
+
+    //////////EXIBIR LISTA CONTATOS
+
+    private fun exibirListaContatos(txtContatos: TextView){
+        contatos.sortBy { it.getNome() }
+        txtContatos.visibility = View.VISIBLE
+        var mensagem = ""
+        for(contato in contatos){
+            mensagem += "- Nome: ${contato.getNome()} Telefone: ${contato.getTelefone()}\n Informação adicional: ${contato.getInfo()}\n"
+        }
+        txtContatos.text = mensagem
+    }
+
+//////////////BUSCAR CONTATOS
+
+
+    private fun buscarContato(nome: String, txtContatos: TextView){
+        txtContatos.visibility = View.VISIBLE
+        var mensagem = ""
+        for(contato in contatos){
+            if(nome == contato.getNome()){
+                mensagem += "- Nome: ${contato.getNome()} Telefone: ${contato.getTelefone()}\n Informação adicional: ${contato.getInfo()}\n"
+            }
+        }
+        if(mensagem == ""){
+            Toast.makeText(this, "Nenhum contato encontrado na agenda", Toast.LENGTH_SHORT)
+                .show()
+//            Toast.makeText(this, getString(R.string.no_contacts_found), Toast.LENGTH_SHORT)
+//                .show()
+        }
+        txtContatos.text = mensagem
+    }
+
+
+
+///////////////////////////////////////////////
+
 }

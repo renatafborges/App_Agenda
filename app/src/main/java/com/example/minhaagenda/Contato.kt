@@ -1,16 +1,7 @@
 package com.example.minhaagenda
 
-data class Contato(
-    var nome: String,
-    var telefone: String,
-    var tipo: Int,
-    var referencia: String) {
-
-    open fun exibirRegistro(): String {
-        return "$nome - $telefone do tipo ${tipo}"
-    }
+open class Contato( private val nome: String, private val telefone: String, private var info: String) {
+    fun getNome(): String = nome
+    fun getTelefone(): String = telefone
+    fun getInfo(): String = info
 }
-
-//classe pessoal
-//classe trabalho, as duas herdam de contato (com nome, telefone e tipo)
-//
