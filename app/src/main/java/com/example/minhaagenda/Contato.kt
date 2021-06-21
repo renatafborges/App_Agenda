@@ -4,4 +4,5 @@ open class Contato( private val nome: String, private val telefone: String, priv
     fun getNome(): String = nome
     fun getTelefone(): String = telefone
     fun getInfo(): String = info
+
 }

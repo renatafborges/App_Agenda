@@ -9,6 +9,9 @@
     <string name="CampoPesquisa">Pesquisar por nome</string>
     <string name="Pesquisar">Pesquisar</string>
     <string name="ExibirLista">Exibir todos</string>
+    <string name="Cadastrar">Cadastrar</string>
+    <string name="Retornar">Retornar</string>
+
 
 </resources>
 
