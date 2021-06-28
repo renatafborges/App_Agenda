@@ -19,8 +19,8 @@ class AdicionarContatoActivity : AppCompatActivity() {
     private lateinit var btnRetornarMain: Button
 
 
-    private var contatos : MutableList<Contato> = mutableListOf()
-    private var infoAdiconal: AdicionarTipo? = null
+    var contatos : MutableList<Contato> = mutableListOf()
+    var infoAdiconal: AdicionarTipo? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

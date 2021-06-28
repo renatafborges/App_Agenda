@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#D6D1D1"
+    android:layout_marginBottom="8dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:id="@+id/ItemNome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_margin="16dp"
+        tools:text="Nome"
+        />
+
+    <TextView
+        android:id="@+id/ItemTelefone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/ItemNome"
+        app:layout_constraintTop_toBottomOf="@+id/ItemNome"
+        android:layout_margin="16dp"
+        tools:text="Telefone"
+        />
+
+    <TextView
+        android:id="@+id/ItemInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/ItemTelefone"
+        app:layout_constraintTop_toBottomOf="@+id/ItemTelefone"
+        android:layout_margin="16dp"
+        tools:text="Informação Adicional:"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

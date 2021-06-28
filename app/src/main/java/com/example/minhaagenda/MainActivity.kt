@@ -5,7 +5,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.*
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
+
+//private var contatos : MutableList<Contato> = mutableListOf()
+//private var infoAdiconal: AdicionarTipo? = null
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,22 +23,28 @@ class MainActivity : AppCompatActivity() {
 
     private var contatos : MutableList<Contato> = mutableListOf()
     private var infoAdiconal: AdicionarTipo? = null
+    private lateinit var rvContatos : RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        bindViews()
-    }
 
-    fun bindViews() {
+
         edtCampoPesquisa = findViewById(R.id.edtCampoPesquisa)
         btnPesquisar = findViewById(R.id.btnPesquisar)
         txtContatos = findViewById(R.id.txtContatos)
         btnExibirLista = findViewById(R.id.btnExibirLista)
         btnCadastrar = findViewById<Button>(R.id.btnCadastrar)
+        rvContatos = findViewById<RecyclerView>(R.id.rvContatos)
 
+        //DATASET
+        val lista = mutableListOf<Contato>()
+        Contato("Renata", "44", "Casa")
+        Contato("Amanda", "21", "Trabalho")
 
-///////BOTÃO CADASTRAR - PROXACTIVITY
+        rvContatos.adapter = ContatosAdapter(dataSet = lista)
+        rvContatos.layoutManager = LinearLayoutManager(this)
+
 
         btnCadastrar.setOnClickListener{
             adicionarContatoActivity()
@@ -57,6 +68,9 @@ class MainActivity : AppCompatActivity() {
             edtCampoPesquisa.text.clear()
         }
     }
+
+///////BOTÃO CADASTRAR - PROXACTIVITY
+
 
     ///FUNCAO CADASTRAR PROXIMA TELA
 
